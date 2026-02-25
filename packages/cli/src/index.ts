@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { spawn } from 'child_process';
 import { push } from "./commands/push.js";
 import { list } from "./commands/list.js";
 import { status } from "./commands/status.js";
@@ -11,16 +12,65 @@ const commands: Record<string, (args: string[]) => void | Promise<void>> = {
   list,
   status,
   link,
+  server: startServer,
+  start: startServer,
+  ui: startServer,
 };
 
 function printUsage(): void {
-  console.log(`usage: git drive <command> [options]
+  console.log(`
+git-drive - Turn any external drive into a git remote backup for your code
+
+Usage:
+  git-drive <command> [options]
 
 Commands:
   link                 Link current repo to a drive
   push                 Push current repo to drive
-  list                 Show projects on drive
-  status               Check drive and repo state`);
+  list                 Show connected drives and their status
+  status               Show detailed status of drives and repos
+  server, start, ui    Start the git-drive web UI server
+
+Options:
+  -h, --help           Show this help message
+
+Examples:
+  git-drive link                    Link current repo to a drive
+  git-drive push                    Push current repo to drive
+  git-drive list                    List connected drives
+  git-drive status                  Show detailed status
+  git-drive server                  Start the web UI at http://localhost:4483
+
+Environment Variables:
+  GIT_DRIVE_PORT       Port for the web server (default: 4483)
+
+Docker:
+  docker run -it --rm -v /Volumes:/Volumes -p 4483:4483 git-drive
+
+Documentation:
+  https://github.com/josmanvis/git-drive
+`);
+}
+
+function startServer(_args: string[]): void {
+  console.log('\n  🚀 Starting Git Drive server...\n');
+  console.log('  Web UI: http://localhost:4483\n');
+  console.log('  Press Ctrl+C to stop\n');
+  
+  const serverPath = require.resolve('./server.js');
+  const child = spawn(process.execPath, [serverPath], {
+    stdio: 'inherit',
+    env: process.env
+  });
+  
+  child.on('error', (err) => {
+    console.error('Failed to start server:', err.message);
+    process.exit(1);
+  });
+  
+  child.on('exit', (code) => {
+    process.exit(code || 0);
+  });
 }
 
 const [command, ...args] = process.argv.slice(2);
