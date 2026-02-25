@@ -7,19 +7,19 @@ Git drive is an app that can turn any connected storage volume into another git 
 ### npm
 
 ```bash
-npm install -g git-drive-cli
+npm install -g git-drive
 ```
 
 ### pnpm
 
 ```bash
-pnpm add -g git-drive-cli
+pnpm add -g git-drive
 ```
 
 ### yarn
 
 ```bash
-yarn global add git-drive-cli
+yarn global add git-drive
 ```
 
 ## Quick Start

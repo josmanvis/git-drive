@@ -1,5 +1,5 @@
 {
-  "name": "git-drive-cli",
+  "name": "git-drive",
   "version": "0.1.0",
   "description": "Turn any external drive into a git remote backup for your code",
   "keywords": [
