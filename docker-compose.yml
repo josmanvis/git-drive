@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  git-drive-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    ports:
+      - "4483:4483"
+    volumes:
+      - git-drive-config:/root/.config/git-drive
+      # USER: Add your external drive mounts here. For example:
+      # For macOS:
+      # - /Volumes/MyExternalDrive:/mnt/MyExternalDrive
+      # For Linux:
+      # - /media/youruser/MyExternalDrive:/mnt/MyExternalDrive
+      # These paths are illustrative; you will need to adjust them to your actual drive mount points.
+    environment:
+      SERVER_URL: "http://localhost:4483" # Or the public URL if exposed
+    restart: unless-stopped
+
+  git-drive-cli:
+    build:
+      context: .
+      dockerfile: Dockerfile.cli
+    volumes:
+      - git-drive-config:/root/.config/git-drive
+      # USER: Add your external drive mounts here, same as for server.
+      # For example, to make a host repo available to the CLI:
+      # - ./my-local-repo:/app/my-local-repo
+      # And also any external drives you want the CLI to interact with:
+      # For macOS:
+      # - /Volumes/MyExternalDrive:/mnt/MyExternalDrive
+      # For Linux:
+      # - /media/youruser/MyExternalDrive:/mnt/MyExternalDrive
+      # These paths are illustrative; you will need to adjust them to your actual drive mount points.
+    depends_on:
+      - git-drive-server # Ensures config volume is initialized by server if needed.
+    # The 'git-drive-cli' service is designed to be used via `docker compose run` or `docker compose exec`.
+    # To use the CLI, you would typically run:
+    # docker compose run git-drive-cli <cli-command> <args>
+    # Or to execute a command in a running container:
+    # docker compose exec git-drive-cli <cli-command> <args>
+    # For keeping the container running in the background for exec:
+    command: ["tail", "-f", "/dev/null"]
+
+volumes:
+  git-drive-config: # For persistent git-drive configs like links.json

@@ -2,15 +2,24 @@
   "name": "git-drive",
   "version": "0.1.0",
   "description": "Use an external drive as a git bare repository remote",
-  "bin": {
-    "git-drive": "./dist/index.js"
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build": "pnpm build:cli && pnpm build:ui && pnpm build:server",
+    "build:cli": "tsc -p packages/cli/tsconfig.json",
+    "build:ui": "cd packages/ui && pnpm run build",
+    "build:server": "tsc -p packages/server/tsconfig.json",
     "dev": "tsc --watch"
   },
   "devDependencies": {
-    "typescript": "^5.7.0",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "drivelist",
+      "esbuild"
+    ]
   }
 }

@@ -1,0 +1,32 @@
+# Use a Node.js base image that includes git and common utilities for node-disk-info (lsblk for linux)
+FROM node:20-alpine
+
+# Install git and util-linux (for lsblk)
+RUN apk add --no-cache git util-linux
+
+# Set working directory
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy package.json and pnpm-lock.yaml for dependency installation
+COPY package.json pnpm-lock.yaml ./
+COPY packages/server/package.json ./packages/server/
+COPY packages/ui/package.json ./packages/ui/
+COPY packages/cli/package.json ./packages/cli/ # Copy cli's package.json too for root pnpm install
+
+# Install dependencies for all workspaces
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Build server and UI
+RUN pnpm build:server && pnpm build:ui
+
+# Expose the port the server runs on
+EXPOSE 4483
+
+# Command to run the server
+CMD ["pnpm", "--filter=@git-drive/server", "start"]

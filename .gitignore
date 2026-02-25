@@ -1,2 +1,6 @@
 node_modules/
 dist/
+.claude/
+.test-drive/
+.DS_Store
+*.log

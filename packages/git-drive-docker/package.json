@@ -1,0 +1,15 @@
+{
+  "name": "git-drive-docker",
+  "version": "0.1.0",
+  "description": "Dockerized Git Drive environment and CLI wrapper",
+  "main": "index.js",
+  "scripts": {
+    "build:images": "docker compose build",
+    "up": "docker compose up -d",
+    "down": "docker compose down",
+    "cli": "docker compose run git-drive-cli"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

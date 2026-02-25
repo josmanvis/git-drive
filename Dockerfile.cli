@@ -1,0 +1,30 @@
+# Use a Node.js base image that includes git and common utilities
+FROM node:20-alpine
+
+# Install git and util-linux (for lsblk)
+RUN apk add --no-cache git util-linux
+
+# Set working directory
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy package.json and pnpm-lock.yaml for dependency installation
+COPY package.json pnpm-lock.yaml ./
+COPY packages/cli/package.json ./packages/cli/
+COPY packages/server/package.json ./packages/server/ # Copy server's package.json too for root pnpm install
+COPY packages/ui/package.json ./packages/ui/ # Copy ui's package.json too for root pnpm install
+
+# Install dependencies for all workspaces
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Build cli
+RUN pnpm build:cli
+
+# Entrypoint to run the git-drive CLI
+# This will allow 'docker run git-drive-cli <command> <args>'
+ENTRYPOINT ["pnpm", "--filter=@git-drive/cli", "start"]

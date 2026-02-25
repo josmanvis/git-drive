@@ -1,0 +1,4 @@
+packages:
+  - 'packages/*'
+  - 'packages/git-drive-docker'
+  - 'packages/git-drive-docker'

@@ -40,3 +40,34 @@ export function assertDriveMounted(drivePath: string): void {
 export function getDriveStorePath(drivePath: string): string {
   return join(drivePath, "git-drive");
 }
+
+export interface LinkRegistry {
+  [localPath: string]: {
+    mountpoint: string;
+    repoName: string;
+    linkedAt: string;
+  };
+}
+
+const LINKS_FILE = join(CONFIG_DIR, "links.json");
+
+export function loadLinks(): LinkRegistry {
+  if (!existsSync(LINKS_FILE)) return {};
+  try {
+    const raw = readFileSync(LINKS_FILE, "utf-8");
+    return JSON.parse(raw) as LinkRegistry;
+  } catch {
+    return {};
+  }
+}
+
+export function saveLink(localPath: string, mountpoint: string, repoName: string): void {
+  mkdirSync(CONFIG_DIR, { recursive: true });
+  const links = loadLinks();
+  links[localPath] = {
+    mountpoint,
+    repoName,
+    linkedAt: new Date().toISOString(),
+  };
+  writeFileSync(LINKS_FILE, JSON.stringify(links, null, 2) + "\n");
+}
