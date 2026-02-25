@@ -71,6 +71,7 @@ jobs:
         run: pnpm build:cli
 
       - name: Publish to npm
-        run: pnpm --filter=git-drive publish --access public --no-git-checks
+        working-directory: packages/cli
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
