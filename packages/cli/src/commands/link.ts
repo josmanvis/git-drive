@@ -19,17 +19,35 @@ export async function link(args: string[]): Promise<void> {
       return;
     }
 
-    const { drive } = await prompts({
-      type: "select",
-      name: "drive",
-      message: "Select a configured git-drive:",
-      choices: configuredDrives.map((d) => ({
-        title: `${d.filesystem} (${d.mounted})`,
-        value: d,
-      })),
-    });
+    // Check for --drive flag for non-interactive mode
+    const driveFlagIndex = args.findIndex((a) => a === "--drive" || a === "-d");
+    const drivePath = driveFlagIndex !== -1 ? args[driveFlagIndex + 1] : null;
+    const createNew = args.includes("--create") || args.includes("-c");
 
-    if (!drive) return;
+    let drive;
+
+    if (drivePath) {
+      // Non-interactive mode: find the drive by path
+      drive = configuredDrives.find((d) => d.mounted === drivePath);
+      if (!drive) {
+        console.log(`Drive not found at: ${drivePath}`);
+        return;
+      }
+    } else {
+      // Interactive mode
+      const result = await prompts({
+        type: "select",
+        name: "drive",
+        message: "Select a configured git-drive:",
+        choices: configuredDrives.map((d) => ({
+          title: `${d.filesystem} (${d.mounted})`,
+          value: d,
+        })),
+      });
+
+      if (!result.drive) return;
+      drive = result.drive;
+    }
 
     const gitDrivePath = path.join(drive.mounted, ".git-drive");
     const existingRepos = fs.readdirSync(gitDrivePath).filter((entry) => {
@@ -41,47 +59,65 @@ export async function link(args: string[]): Promise<void> {
     });
 
     const CREATE_NEW = "__CREATE_NEW__";
-    const { selectedRepo } = await prompts({
-      type: "select",
-      name: "selectedRepo",
-      message: "Select an existing repository to link, or create a new one:",
-      choices: [
-        { title: "✨ Create new repository...", value: CREATE_NEW },
-        ...existingRepos.map((repo) => ({
-          title: `📁 ${repo.replace(/\.git$/, "")}`,
-          value: repo,
-        })),
-      ],
-    });
+    let targetRepoName: string | null = null;
 
-    if (!selectedRepo) return;
-
-    let targetRepoName = selectedRepo;
-
-    if (selectedRepo === CREATE_NEW) {
+    if (createNew) {
+      // Non-interactive mode: create new repo with project name
       const defaultName = getProjectName();
-      const { newRepoName } = await prompts({
-        type: "text",
-        name: "newRepoName",
-        message: "Enter the new repository name:",
-        initial: defaultName,
-      });
-
-      if (!newRepoName) return;
-      targetRepoName = newRepoName.endsWith(".git") ? newRepoName : `${newRepoName}.git`;
+      targetRepoName = defaultName.endsWith(".git") ? defaultName : `${defaultName}.git`;
 
       const repoPath = path.join(gitDrivePath, targetRepoName);
       if (fs.existsSync(repoPath)) {
-        console.log(`Repository ${targetRepoName} already exists in this drive.`);
-        return;
+        console.log(`Repository ${targetRepoName} already exists in this drive. Linking to existing.`);
+      } else {
+        git(`init --bare "${repoPath}"`);
+        console.log(`Created new bare repository: ${targetRepoName}`);
       }
+    } else {
+      // Interactive mode
+      const { selectedRepo } = await prompts({
+        type: "select",
+        name: "selectedRepo",
+        message: "Select an existing repository to link, or create a new one:",
+        choices: [
+          { title: "✨ Create new repository...", value: CREATE_NEW },
+          ...existingRepos.map((repo) => ({
+            title: `📁 ${repo.replace(/\.git$/, "")}`,
+            value: repo,
+          })),
+        ],
+      });
 
-      git(`init --bare "${repoPath}"`);
-      console.log(`Created new bare repository: ${targetRepoName}`);
+      if (!selectedRepo) return;
+      targetRepoName = selectedRepo;
+
+      if (selectedRepo === CREATE_NEW) {
+        const defaultName = getProjectName();
+        const { newRepoName } = await prompts({
+          type: "text",
+          name: "newRepoName",
+          message: "Enter the new repository name:",
+          initial: defaultName,
+        });
+
+        if (!newRepoName) return;
+        targetRepoName = newRepoName.endsWith(".git") ? newRepoName : `${newRepoName}.git`;
+
+        const repoPath = path.join(gitDrivePath, targetRepoName as string);
+        if (fs.existsSync(repoPath)) {
+          console.log(`Repository ${targetRepoName} already exists in this drive.`);
+          return;
+        }
+
+        git(`init --bare "${repoPath}"`);
+        console.log(`Created new bare repository: ${targetRepoName}`);
+      }
     }
 
+    if (!targetRepoName) return;
+
     const repoRoot = getRepoRoot();
-    const finalRepoPath = path.join(gitDrivePath, targetRepoName);
+    const finalRepoPath = path.join(gitDrivePath, targetRepoName as string);
 
     // Check if remote 'gd' already exists
     let gdExists = false;
@@ -100,7 +136,7 @@ export async function link(args: string[]): Promise<void> {
     }
 
     // Persist to global git-drive registry for the Web UI
-    saveLink(repoRoot, drive.mounted, targetRepoName);
+    saveLink(repoRoot, drive.mounted, targetRepoName as string);
 
     console.log(`\n✅ Successfully linked!`);
     console.log(`Repository: ${targetRepoName.replace(/\.git$/, "")}`);

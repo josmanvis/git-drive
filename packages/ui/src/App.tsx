@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { Routes, Route, Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { HardDrive, Search, FolderGit2, Trash2, Plus, ArrowLeft, File as FileIcon, Folder as FolderIcon, ChevronRight } from 'lucide-react';
+import Fuse from 'fuse.js';
 
 type Drive = {
   device: string;
@@ -164,6 +165,7 @@ function RepoList() {
   const [repos, setRepos] = useState<Repo[]>([]);
   const [repoStatuses, setRepoStatuses] = useState<Record<string, { linked: boolean; hasChanges: boolean; unpushed: boolean }>>({});
   const [pushing, setPushing] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchRepos = async () => {
     if (!mountpoint) return;
@@ -186,6 +188,22 @@ function RepoList() {
   useEffect(() => {
     fetchRepos();
   }, [mountpoint]);
+
+  // Configure fuse.js for fuzzy search
+  const fuse = useMemo(() => {
+    return new Fuse(repos, {
+      keys: ['name', 'path'],
+      threshold: 0.4,
+      includeScore: true,
+    });
+  }, [repos]);
+
+  // Filter repos based on search query
+  const filteredRepos = useMemo(() => {
+    if (!searchQuery.trim()) return repos;
+    const results = fuse.search(searchQuery);
+    return results.map(result => result.item);
+  }, [fuse, repos, searchQuery]);
 
   const handleCreateRepo = async () => {
     if (!mountpoint) return;
@@ -245,6 +263,8 @@ function RepoList() {
           <input
             type="text"
             placeholder="Filter repositories..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="bg-transparent border-none outline-none text-sm w-full text-white placeholder-gray-600"
           />
         </div>
@@ -258,14 +278,23 @@ function RepoList() {
       </div>
 
       <div className="grid gap-4">
-        {repos.length === 0 ? (
+        {filteredRepos.length === 0 ? (
           <div className="text-center py-20 border border-dashed border-gray-800 rounded-2xl">
             <FolderGit2 className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-white mb-2">No repositories yet</h3>
-            <p className="text-gray-500 text-sm">Create a new repository to get started backing up to this drive.</p>
+            {searchQuery ? (
+              <>
+                <h3 className="text-lg font-medium text-white mb-2">No repositories match your search</h3>
+                <p className="text-gray-500 text-sm">Try a different search term or clear the filter.</p>
+              </>
+            ) : (
+              <>
+                <h3 className="text-lg font-medium text-white mb-2">No repositories yet</h3>
+                <p className="text-gray-500 text-sm">Create a new repository to get started backing up to this drive.</p>
+              </>
+            )}
           </div>
         ) : (
-          repos.map((repo, idx) => (
+          filteredRepos.map((repo, idx) => (
             <div
               key={idx}
               className="flex items-center justify-between p-5 bg-gray-900 border border-gray-800 rounded-2xl group hover:border-gray-700 transition-all cursor-pointer shadow-lg shadow-black/20"

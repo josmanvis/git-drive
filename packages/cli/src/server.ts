@@ -565,7 +565,9 @@ app.get('*', (_req: Request, res: Response) => {
   }
 });
 
-// Start server
-app.listen(port, () => {
-  console.log(`\n  🚀 Git Drive is running at http://localhost:${port}\n`);
-});
+// Start server only when run directly (not when imported)
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`\n  🚀 Git Drive is running at http://localhost:${port}\n`);
+  });
+}

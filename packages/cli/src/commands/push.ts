@@ -5,7 +5,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 
-export async function push(_args: string[]): Promise<void> {
+export async function push(args: string[]): Promise<void> {
   if (!isGitRepo()) {
     throw new GitDriveError("Not in a git repository.");
   }
@@ -18,15 +18,28 @@ export async function push(_args: string[]): Promise<void> {
   try {
     const currentBranch = git("branch --show-current") || "HEAD";
 
-    const { pushMode } = await prompts({
-      type: "select",
-      name: "pushMode",
-      message: `Pushing to ${existingUrl}\nSelect what to branch to push:`,
-      choices: [
-        { title: `Current branch only (${currentBranch})`, value: "current" },
-        { title: "All branches & tags", value: "all" }
-      ]
-    });
+    // Check for --all or --current flags for non-interactive mode
+    const pushAll = args.includes("--all");
+    const pushCurrent = args.includes("--current");
+    
+    let pushMode: "current" | "all" | null = null;
+    
+    if (pushAll) {
+      pushMode = "all";
+    } else if (pushCurrent) {
+      pushMode = "current";
+    } else {
+      const result = await prompts({
+        type: "select",
+        name: "pushMode",
+        message: `Pushing to ${existingUrl}\nSelect what to branch to push:`,
+        choices: [
+          { title: `Current branch only (${currentBranch})`, value: "current" },
+          { title: "All branches & tags", value: "all" }
+        ]
+      });
+      pushMode = result.pushMode;
+    }
 
     if (!pushMode) return;
 
