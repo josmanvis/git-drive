@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Git-Drive - Turn any connected storage volume into a git remote for backing up your code">
+    <meta name="keywords" content="git, backup, drive, storage, version control, remote">
+    <title>Git-Drive | Backup Your Code to Any Drive</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💾</text></svg>">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-pattern" aria-hidden="true"></div>
+    <div class="bg-gradient" aria-hidden="true"></div>
+    
+    <!-- Navigation -->
+    <header class="header">
+        <nav class="nav container">
+            <a href="#home" class="logo" data-page="home">
+                <span class="logo-icon">◈</span>
+                <span class="logo-text">git-<span class="accent">drive</span></span>
+            </a>
+            
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active" data-page="home">Home</a></li>
+                <li><a href="#installation" class="nav-link" data-page="installation">Installation</a></li>
+                <li><a href="#commands" class="nav-link" data-page="commands">Commands</a></li>
+                <li><a href="#companion" class="nav-link" data-page="companion">Companion</a></li>
+                <li><a href="#push-all" class="nav-link" data-page="push-all">Push-All</a></li>
+                <li><a href="#development" class="nav-link" data-page="development">Development</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" aria-label="Toggle theme">
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+                <a href="https://github.com/josmanvis/git-drive" class="github-link" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Home Page -->
+        <section id="home" class="page active">
+            <div class="container">
+                <!-- Hero -->
+                <div class="hero">
+                    <div class="hero-content">
+                        <div class="hero-badge">
+                            <span class="badge-icon">◈</span>
+                            <span>Backup your code anywhere</span>
+                        </div>
+                        <h1 class="hero-title">
+                            Turn any drive into a<br>
+                            <span class="gradient-text">git backup remote</span>
+                        </h1>
+                        <p class="hero-description">
+                            Git-Drive transforms external storage volumes into git remote repositories. 
+                            Backup your code offline, transport it physically, or keep complete control of your data.
+                        </p>
+                        <div class="hero-actions">
+                            <a href="#installation" class="btn btn-primary" data-page="installation">
+                                <span>Get Started</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                            <a href="https://github.com/josmanvis/git-drive" class="btn btn-secondary" target="_blank" rel="noopener">
+                                <svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon">
+                                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+                                </svg>
+                                <span>View on GitHub</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="terminal-demo">
+                            <div class="terminal-header">
+                                <span class="terminal-dot"></span>
+                                <span class="terminal-dot"></span>
+                                <span class="terminal-dot"></span>
+                                <span class="terminal-title">Terminal</span>
+                            </div>
+                            <div class="terminal-body">
+                                <div class="terminal-line">
+                                    <span class="prompt">$</span>
+                                    <span class="command">git-drive init /Volumes/Backup</span>
+                                </div>
+                                <div class="terminal-output">✓ Initialized git-drive on Backup</div>
+                                <div class="terminal-line">
+                                    <span class="prompt">$</span>
+                                    <span class="command">git-drive link</span>
+                                </div>
+                                <div class="terminal-output">✓ Linked my-project → Backup</div>
+                                <div class="terminal-line">
+                                    <span class="prompt">$</span>
+                                    <span class="command">git-drive push</span>
+                                </div>
+                                <div class="terminal-output success">✓ Pushed 3 branches, 12 commits</div>
+                                <div class="terminal-line">
+                                    <span class="prompt">$</span>
+                                    <span class="cursor"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features -->
+                <div class="features">
+                    <div class="features-header">
+                        <h2 class="section-title">Why Git-Drive?</h2>
+                        <p class="section-subtitle">Simple, reliable, offline-first code backup</p>
+                    </div>
+                    <div class="features-grid">
+                        <article class="feature-card">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/>
+                                    <path d="M9 12l2 2 4-4"/>
+                                </svg>
+                            </div>
+                            <h3 class="feature-title">Offline Backups</h3>
+                            <p class="feature-description">No internet required. Backup directly to USB drives, external HDDs, or network storage.</p>
+                        </article>
+                        <article class="feature-card">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M4 7V4h16v3M9 20h6M12 4v16"/>
+                                </svg>
+                            </div>
+                            <h3 class="feature-title">Full Git Support</h3>
+                            <p class="feature-description">Works with all git features—branches, tags, history. Your complete repo, preserved.</p>
+                        </article>
+                        <article class="feature-card">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                                    <path d="M8 21h8M12 17v4"/>
+                                </svg>
+                            </div>
+                            <h3 class="feature-title">Web UI</h3>
+                            <p class="feature-description">Beautiful dashboard to manage drives, view repos, and monitor backup status.</p>
+                        </article>
+                        <article class="feature-card">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                                </svg>
+                            </div>
+                            <h3 class="feature-title">Multi-Drive</h3>
+                            <p class="feature-description">Handle multiple connected drives simultaneously. Backup to different destinations.</p>
+                        </article>
+                        <article class="feature-card">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                                </svg>
+                            </div>
+                            <h3 class="feature-title">Companion Mode</h3>
+                            <p class="feature-description">Run git-drive directly from the drive itself. Portable and self-contained.</p>
+                        </article>
+                        <article class="feature-card">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <path d="M12 6v6l4 2"/>
+                                </svg>
+                            </div>
+                            <h3 class="feature-title">Push-All</h3>
+                            <p class="feature-description">Backup entire directories of repos with a single command. Bulk operations made easy.</p>
+                        </article>
+                    </div>
+                </div>
+
+                <!-- Quick Start -->
+                <div class="quickstart">
+                    <h2 class="section-title">Quick Start</h2>
+                    <div class="quickstart-steps">
+                        <div class="step">
+                            <span class="step-number">01</span>
+                            <div class="step-content">
+                                <h3>Install</h3>
+                                <div class="code-block">
+                                    <code>npm install -g git-drive</code>
+                                    <button class="copy-btn" aria-label="Copy to clipboard">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">02</span>
+                            <div class="step-content">
+                                <h3>Initialize Drive</h3>
+                                <div class="code-block">
+                                    <code>git-drive init /Volumes/MyDrive</code>
+                                    <button class="copy-btn" aria-label="Copy to clipboard">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">03</span>
+                            <div class="step-content">
+                                <h3>Link & Push</h3>
+                                <div class="code-block">
+                                    <code>git-drive link && git-drive push</code>
+                                    <button class="copy-btn" aria-label="Copy to clipboard">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Installation Page -->
+        <section id="installation" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h1 class="page-title">Installation</h1>
+                    <p class="page-description">Choose your preferred package manager or run via Docker</p>
+                </div>
+
+                <div class="tabs">
+                    <div class="tab-list" role="tablist">
+                        <button class="tab active" role="tab" aria-selected="true" data-tab="npm">npm</button>
+                        <button class="tab" role="tab" aria-selected="false" data-tab="pnpm">pnpm</button>
+                        <button class="tab" role="tab" aria-selected="false" data-tab="yarn">yarn</button>
+                        <button class="tab" role="tab" aria-selected="false" data-tab="docker">Docker</button>
+                    </div>
+                    
+                    <div class="tab-panels">
+                        <div class="tab-panel active" id="npm" role="tabpanel">
+                            <div class="code-block large">
+                                <div class="code-header">
+                                    <span>Terminal</span>
+                                    <button class="copy-btn" aria-label="Copy to clipboard">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <pre><code>npm install -g git-drive</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-panel" id="pnpm" role="tabpanel">
+                            <div class="code-block large">
+                                <div class="code-header">
+                                    <span>Terminal</span>
+                                    <button class="copy-btn" aria-label="Copy to clipboard">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <pre><code>pnpm add -g git-drive</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-panel" id="yarn" role="tabpanel">
+                            <div class="code-block large">
+                                <div class="code-header">
+                                    <span>Terminal</span>
+                                    <button class="copy-btn" aria-label="Copy to clipboard">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <pre><code>yarn global add git-drive</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-panel" id="docker" role="tabpanel">
+                            <div class="code-block large">
+                                <div class="code-header">
+                                    <span>Terminal</span>
+                                    <button class="copy-btn" aria-label="Copy to clipboard">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <pre><code># Build the Docker image
+docker compose build
+
+# Run the container
+docker compose up -d
+
+# Use the CLI through Docker
+docker compose run git-drive-cli <command></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h2>Verify Installation</h2>
+                    <p>After installation, verify git-drive is working:</p>
+                    <div class="code-block">
+                        <pre><code>git-drive --version</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Commands Page -->
+        <section id="commands" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h1 class="page-title">Commands</h1>
+                    <p class="page-description">Complete reference for all git-drive CLI commands</p>
+                </div>
+
+                <div class="commands-grid">
+                    <article class="command-card">
+                        <header class="command-header">
+                            <code class="command-name">init [path]</code>
+                        </header>
+                        <p class="command-description">Initialize git-drive on an external drive. Prompts for drive selection if no path provided.</p>
+                        <div class="command-example">
+                            <span class="label">Example</span>
+                            <div class="code-block">
+                                <pre><code>git-drive init /Volumes/MyDrive</code></pre>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="command-card">
+                        <header class="command-header">
+                            <code class="command-name">link</code>
+                        </header>
+                        <p class="command-description">Link current repo to a drive (interactive selection). Creates the repo in git-drive if it doesn't exist.</p>
+                        <div class="command-example">
+                            <span class="label">Example</span>
+                            <div class="code-block">
+                                <pre><code>git-drive link</code></pre>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="command-card">
+                        <header class="command-header">
+                            <code class="command-name">push</code>
+                        </header>
+                        <p class="command-description">Push current repo to the linked drive. Pushes all branches and tags.</p>
+                        <div class="command-example">
+                            <span class="label">Example</span>
+                            <div class="code-block">
+                                <pre><code>git-drive push</code></pre>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="command-card">
+                        <header class="command-header">
+                            <code class="command-name">list</code>
+                        </header>
+                        <p class="command-description">Show connected drives and their status. Lists all repos on each drive.</p>
+                        <div class="command-example">
+                            <span class="label">Example</span>
+                            <div class="code-block">
+                                <pre><code>git-drive list</code></pre>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="command-card">
+                        <header class="command-header">
+                            <code class="command-name">status</code>
+                        </header>
+                        <p class="command-description">Show detailed status of drives and repos. Includes sync status and last backup time.</p>
+                        <div class="command-example">
+                            <span class="label">Example</span>
+                            <div class="code-block">
+                                <pre><code>git-drive status</code></pre>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="command-card">
+                        <header class="command-header">
+                            <code class="command-name">server</code>
+                            <span class="command-aliases">aliases: start, ui</span>
+                        </header>
+                        <p class="command-description">Start the git-drive web UI server at http://localhost:4483</p>
+                        <div class="command-example">
+                            <span class="label">Example</span>
+                            <div class="code-block">
+                                <pre><code>git-drive server</code></pre>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="command-card">
+                        <header class="command-header">
+                            <code class="command-name">companion [path]</code>
+                        </header>
+                        <p class="command-description">Run git-drive from a drive (companion mode). Useful for portable usage.</p>
+                        <div class="command-example">
+                            <span class="label">Example</span>
+                            <div class="code-block">
+                                <pre><code>git-drive companion /Volumes/MyDrive</code></pre>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="command-card">
+                        <header class="command-header">
+                            <code class="command-name">push-all <dir></code>
+                        </header>
+                        <p class="command-description">Backup all repos in a directory to a drive. See the Push-All page for detailed options.</p>
+                        <div class="command-example">
+                            <span class="label">Example</span>
+                            <div class="code-block">
+                                <pre><code>git-drive push-all ~/Developer/</code></pre>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="command-card">
+                        <header class="command-header">
+                            <code class="command-name">-v, --version</code>
+                        </header>
+                        <p class="command-description">Show the installed version of git-drive.</p>
+                        <div class="command-example">
+                            <span class="label">Example</span>
+                            <div class="code-block">
+                                <pre><code>git-drive --version</code></pre>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Companion Mode Page -->
+        <section id="companion" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h1 class="page-title">Companion Mode</h1>
+                    <p class="page-description">Run git-drive directly from your external drive</p>
+                </div>
+
+                <div class="content-section">
+                    <p class="lead">Companion mode allows you to run git-drive directly from an external drive, making it portable and self-contained. This is useful when:</p>
+                    
+                    <ul class="feature-list">
+                        <li>You want to use git-drive on multiple computers without installing it</li>
+                        <li>You're at a different machine and need to access your backups</li>
+                        <li>You want the drive to be completely self-contained</li>
+                    </ul>
+                </div>
+
+                <div class="content-section">
+                    <h2>Using Companion Mode</h2>
+                    <p>When you run <code>git-drive init</code> on a drive, it automatically installs a companion copy of git-drive on that drive.</p>
+                    
+                    <div class="code-block large">
+                        <div class="code-header">
+                            <span>Terminal</span>
+                            <button class="copy-btn" aria-label="Copy to clipboard">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <pre><code># Interactive selection - shows drives with git-drive initialized
+git-drive companion
+
+# Direct path - run companion mode from a specific drive
+git-drive companion /Volumes/MyDrive</code></pre>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h2>What Happens</h2>
+                    <div class="steps-list">
+                        <div class="step-item">
+                            <span class="step-num">1</span>
+                            <p>Finds an available port (starting from 4484)</p>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-num">2</span>
+                            <p>Starts the git-drive server in companion mode</p>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-num">3</span>
+                            <p>Opens your browser to the web UI</p>
+                        </div>
+                        <div class="step-item">
+                            <span class="step-num">4</span>
+                            <p>Shows only the companion drive in the UI</p>
+                        </div>
+                    </div>
+                    <p>Press <kbd>Enter</kbd> to stop the companion server.</p>
+                </div>
+
+                <div class="content-section">
+                    <h2>Features</h2>
+                    <div class="features-mini">
+                        <div class="feature-mini">
+                            <span class="feature-mini-icon">◈</span>
+                            <div>
+                                <strong>Portable</strong>
+                                <p>The companion is stored on the drive itself</p>
+                            </div>
+                        </div>
+                        <div class="feature-mini">
+                            <span class="feature-mini-icon">◈</span>
+                            <div>
+                                <strong>Self-updating</strong>
+                                <p>The companion can be updated from the web UI</p>
+                            </div>
+                        </div>
+                        <div class="feature-mini">
+                            <span class="feature-mini-icon">◈</span>
+                            <div>
+                                <strong>Version tracking</strong>
+                                <p>Shows companion version and update availability</p>
+                            </div>
+                        </div>
+                        <div class="feature-mini">
+                            <span class="feature-mini-icon">◈</span>
+                            <div>
+                                <strong>Port detection</strong>
+                                <p>Automatically finds an available port if the default is in use</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Push-All Page -->
+        <section id="push-all" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h1 class="page-title">Push-All Command</h1>
+                    <p class="page-description">Backup all repositories in a directory with a single command</p>
+                </div>
+
+                <div class="content-section">
+                    <div class="code-block large">
+                        <div class="code-header">
+                            <span>Terminal</span>
+                            <button class="copy-btn" aria-label="Copy to clipboard">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <pre><code># Backup all repos in a directory
+git-drive push-all ~/Developer/
+
+# With options
+git-drive push-all ~/Developer/ --drive /Volumes/MyUSB    # Non-interactive drive selection
+git-drive push-all ~/Developer/ --init-all                # Initialize non-git directories as repos
+git-drive push-all ~/Developer/ --skip-non-git            # Skip non-git directories
+git-drive push-all ~/Developer/ --force                   # Override existing drive links</code></pre>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h2>Features</h2>
+                    <div class="features-mini">
+                        <div class="feature-mini">
+                            <span class="feature-mini-icon">◈</span>
+                            <div>
+                                <strong>Auto-discovery</strong>
+                                <p>Scans directory for git repositories and non-git projects</p>
+                            </div>
+                        </div>
+                        <div class="feature-mini">
+                            <span class="feature-mini-icon">◈</span>
+                            <div>
+                                <strong>Non-git handling</strong>
+                                <p>Offers to initialize non-git projects as git repos before backing up</p>
+                            </div>
+                        </div>
+                        <div class="feature-mini">
+                            <span class="feature-mini-icon">◈</span>
+                            <div>
+                                <strong>Full backup</strong>
+                                <p>Pushes all branches and tags for each repository</p>
+                            </div>
+                        </div>
+                        <div class="feature-mini">
+                            <span class="feature-mini-icon">◈</span>
+                            <div>
+                                <strong>Auto-link</strong>
+                                <p>Automatically links each repo to the selected drive</p>
+                            </div>
+                        </div>
+                        <div class="feature-mini">
+                            <span class="feature-mini-icon">◈</span>
+                            <div>
+                                <strong>Progress tracking</strong>
+                                <p>Shows real-time progress and summary</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h2>Options</h2>
+                    <div class="table-wrapper">
+                        <table class="options-table">
+                            <thead>
+                                <tr>
+                                    <th>Flag</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>--drive <path></code></td>
+                                    <td>Specify the target drive (non-interactive)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--init-all</code></td>
+                                    <td>Automatically initialize all non-git projects</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--skip-non-git</code></td>
+                                    <td>Skip non-git directories without prompting</td>
+                                </tr>
+                                <tr>
+                                    <td><code>--force</code></td>
+                                    <td>Re-link repos that are already linked to a different drive</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Development Page -->
+        <section id="development" class="page">
+            <div class="container">
+                <div class="page-header">
+                    <h1 class="page-title">Development</h1>
+                    <p class="page-description">Contributing to git-drive</p>
+                </div>
+
+                <div class="content-section">
+                    <h2>Getting Started</h2>
+                    <div class="code-block large">
+                        <div class="code-header">
+                            <span>Terminal</span>
+                            <button class="copy-btn" aria-label="Copy to clipboard">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <pre><code># Clone the repository
+git clone https://github.com/josmanvis/git-drive.git
+cd git-drive
+
+# Install dependencies
+pnpm install
+
+# Build all packages
+pnpm build
+
+# Run in development mode
+pnpm dev</code></pre>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h2>Project Structure</h2>
+                    <div class="structure-tree">
+                        <div class="tree-item">
+                            <span class="folder">packages/</span>
+                            <div class="tree-children">
+                                <div class="tree-item">
+                                    <span class="folder">cli/</span>
+                                    <span class="desc">Command-line interface</span>
+                                </div>
+                                <div class="tree-item">
+                                    <span class="folder">server/</span>
+                                    <span class="desc">Backend server</span>
+                                </div>
+                                <div class="tree-item">
+                                    <span class="folder">ui/</span>
+                                    <span class="desc">Web UI (React + Vite)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h2>Publishing (Maintainers)</h2>
+                    <p>The project uses GitHub Actions for automated publishing to npm. To publish a new version:</p>
+                    <ol class="numbered-list">
+                        <li>Update the version in <code>packages/cli/package.json</code></li>
+                        <li>Create a new git tag and push to main</li>
+                        <li>The CI will automatically build and publish to npm</li>
+                    </ol>
+                    <div class="callout">
+                        <span class="callout-icon">⚠</span>
+                        <p>Make sure to set the <code>NPM_TOKEN</code> secret in your GitHub repository settings.</p>
+                    </div>
+                </div>
+
+                <div class="content-section">
+                    <h2>How It Works</h2>
+                    <p>Git-drive creates a <code>.git-drive/</code> directory on the target drive where it stores bare git repositories. The CLI communicates with a local server that manages drive connections and repository operations.</p>
+                    <p>When you run <code>git-drive link</code>, it:</p>
+                    <ol class="numbered-list">
+                        <li>Creates a bare repo on the drive (if needed)</li>
+                        <li>Adds a git remote named "git-drive" to your local repo</li>
+                        <li>Push operations go directly to the drive via standard git protocols</li>
+                    </ol>
+                    <p>The CLI automatically starts the git-drive server in the background when needed, so commands like <code>link</code>, <code>push</code>, <code>list</code>, and <code>status</code> work immediately without manually starting the server first.</p>
+                </div>
+
+                <div class="content-section">
+                    <h2>License</h2>
+                    <p>MIT License - see <a href="https://github.com/josmanvis/git-drive/blob/main/LICENSE" target="_blank" rel="noopener">LICENSE</a> for details.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">◈</span>
+                    <span class="logo-text">git-<span class="accent">drive</span></span>
+                </div>
+                <p class="footer-tagline">Backup your code anywhere</p>
+                <div class="footer-links">
+                    <a href="https://github.com/josmanvis/git-drive" target="_blank" rel="noopener">GitHub</a>
+                    <a href="https://www.npmjs.com/package/git-drive" target="_blank" rel="noopener">npm</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/app.js"></script>
+</body>
+</html>
