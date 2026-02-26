@@ -1,6 +1,6 @@
 {
   "name": "git-drive",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Turn any external drive into a git remote backup for your code - CLI, server, and web UI",
   "keywords": [
     "git",
@@ -24,8 +24,7 @@
   "homepage": "https://github.com/josmanvis/git-drive#readme",
   "type": "commonjs",
   "bin": {
-    "git-drive": "./dist/index.js",
-    "git-drive-server": "./dist/server.js"
+    "git-drive": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "files": [
