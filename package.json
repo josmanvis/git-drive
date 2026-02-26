@@ -10,7 +10,11 @@
     "build:cli": "tsc -p packages/cli/tsconfig.json",
     "build:ui": "cd packages/ui && pnpm run build",
     "build:server": "tsc -p packages/server/tsconfig.json",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "pnpm -r test",
+    "test:cli": "cd packages/cli && pnpm test",
+    "test:ui": "cd packages/ui && pnpm test",
+    "test:coverage": "pnpm -r test:coverage"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
