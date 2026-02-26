@@ -57,6 +57,7 @@ git-drive server
 | `init [path]` | Initialize git-drive on an external drive. Prompts for drive selection if no path provided. |
 | `link` | Link current repo to a drive (interactive selection) |
 | `push` | Push current repo to the linked drive |
+| `push-all <dir>` | Backup all repos in a directory to a drive (see below) |
 | `list` | Show connected drives and their status |
 | `status` | Show detailed status of drives and repos |
 | `companion [path]` | Run git-drive from a drive (companion mode) - see below |
@@ -97,6 +98,38 @@ Press Enter to stop the companion server.
 - **Self-updating**: The companion can be updated from the web UI
 - **Version tracking**: Shows companion version and update availability
 - **Port detection**: Automatically finds an available port if the default is in use
+
+## Push-All Command
+
+The `push-all` command lets you backup all repositories in a directory with a single command:
+
+```bash
+# Backup all repos in a directory
+git-drive push-all ~/Developer/
+
+# With options
+git-drive push-all ~/Developer/ --drive /Volumes/MyUSB    # Non-interactive drive selection
+git-drive push-all ~/Developer/ --init-all                # Initialize non-git directories as repos
+git-drive push-all ~/Developer/ --skip-non-git            # Skip non-git directories
+git-drive push-all ~/Developer/ --force                   # Override existing drive links
+```
+
+### Features
+
+- **Auto-discovery**: Scans directory for git repositories and non-git projects
+- **Non-git handling**: Offers to initialize non-git projects as git repos before backing up
+- **Full backup**: Pushes all branches and tags for each repository
+- **Auto-link**: Automatically links each repo to the selected drive
+- **Progress tracking**: Shows real-time progress and summary
+
+### Options
+
+| Flag | Description |
+|------|-------------|
+| `--drive <path>` | Specify the target drive (non-interactive) |
+| `--init-all` | Automatically initialize all non-git projects |
+| `--skip-non-git` | Skip non-git directories without prompting |
+| `--force` | Re-link repos that are already linked to a different drive |
 
 ## How it works
 
