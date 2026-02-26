@@ -1,6 +1,6 @@
 {
   "name": "git-drive",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Use an external drive as a git bare repository remote",
   "workspaces": [
     "packages/*"
