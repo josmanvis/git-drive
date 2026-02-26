@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { spawn } from 'child_process';
+import { readFileSync } from 'fs';
 import { push } from "./commands/push.js";
 import { list } from "./commands/list.js";
 import { status } from "./commands/status.js";
@@ -8,6 +9,10 @@ import { link } from "./commands/link.js";
 import { init } from "./commands/init.js";
 import { handleError } from "./errors.js";
 import { ensureServerRunning } from "./server.js";
+
+// Get version from package.json
+declare const __dirname: string;
+const { version: VERSION } = JSON.parse(readFileSync(__dirname + '/../package.json', 'utf-8'));
 
 const commands: Record<string, (args: string[]) => void | Promise<void>> = {
   init,
@@ -39,6 +44,7 @@ Commands:
   server, start, ui    Start the git-drive web UI server
 
 Options:
+  -v, -V, --version    Show version number
   -h, --help           Show this help message
 
 Examples:
@@ -87,6 +93,12 @@ const [command, ...args] = process.argv.slice(2);
   try {
     if (!command || command === "--help" || command === "-h") {
       printUsage();
+      process.exit(0);
+    }
+
+    // Handle version flags
+    if (command === "--version" || command === "-v" || command === "-V" || command === "version") {
+      console.log(`git-drive v${VERSION}`);
       process.exit(0);
     }
 
