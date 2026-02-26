@@ -28,17 +28,23 @@ const renderWithRouter = (initialRoute = '/') => {
 describe('App', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Mock companion-info endpoint
+    mockAxios.get.mockResolvedValue({ data: { companionMode: false, companionDrive: null } });
   });
 
-  it('should render the header with title', () => {
+  it('should render the header with title', async () => {
     renderWithRouter();
-    expect(screen.getByText('Git Drive')).toBeInTheDocument();
-    expect(screen.getByText('Turn any drive into a git remote.')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Git Drive')).toBeInTheDocument();
+      expect(screen.getByText('Turn any drive into a git remote.')).toBeInTheDocument();
+    });
   });
 
-  it('should render drive list on home route', () => {
+  it('should render drive list on home route', async () => {
     renderWithRouter();
-    expect(screen.getByText('Connected Drives')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Connected Drives')).toBeInTheDocument();
+    });
   });
 });
 

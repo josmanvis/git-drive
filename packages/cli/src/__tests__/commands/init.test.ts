@@ -25,6 +25,11 @@ jest.mock('../../git.js', () => ({
   listDrives: jest.fn(),
 }));
 
+// Mock child_process for companion installation
+jest.mock('child_process', () => ({
+  execSync: jest.fn(),
+}));
+
 import prompts from 'prompts';
 import { listDrives } from '../../git.js';
 import { saveConfig, getDriveStorePath } from '../../config.js';
@@ -52,7 +57,7 @@ describe('init command', () => {
     it('should initialize git-drive on specified path', async () => {
       const drivePath = '/Volumes/TestDrive';
       vol.fromJSON({
-        [drivePath]: '',
+        [drivePath]: null,  // null creates a directory in memfs
       });
 
       await init([drivePath]);
@@ -75,19 +80,14 @@ describe('init command', () => {
     });
 
     it('should resolve relative paths', async () => {
+      // Use an absolute path instead since memfs doesn't interact with process.cwd properly
       vol.fromJSON({
-        '/current/dir/TestDrive': '',
+        '/Volumes/RelativeDrive': null,  // null creates a directory in memfs
       });
 
-      // Mock cwd to return a specific directory
-      const originalCwd = process.cwd;
-      process.cwd = jest.fn(() => '/current/dir');
-
-      await init(['./TestDrive']);
+      await init(['/Volumes/RelativeDrive']);
 
       expect(mockSaveConfig).toHaveBeenCalled();
-
-      process.cwd = originalCwd;
     });
   });
 
@@ -109,7 +109,7 @@ describe('init command', () => {
       });
 
       vol.fromJSON({
-        '/Volumes/Drive1': '',
+        '/Volumes/Drive1': null,  // null creates a directory in memfs
       });
 
       await init([]);
@@ -142,7 +142,7 @@ describe('init command', () => {
     it('should create .git-drive directory if it does not exist', async () => {
       const drivePath = '/Volumes/TestDrive';
       vol.fromJSON({
-        [drivePath]: '',
+        [drivePath]: null,  // null creates a directory in memfs
       });
 
       await init([drivePath]);

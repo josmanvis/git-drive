@@ -1,13 +1,20 @@
 import express, { Request, Response } from 'express';
 import { spawn } from 'child_process';
 import path from 'path';
-import { readdirSync, existsSync, mkdirSync, statSync, readFileSync, appendFileSync } from 'fs';
+import { readdirSync, existsSync, mkdirSync, statSync, readFileSync, appendFileSync, writeFileSync } from 'fs';
 import { execSync } from 'child_process';
 import { getDiskInfo } from 'node-disk-info';
 import { homedir } from 'os';
 
 const app = express();
 const port = process.env.GIT_DRIVE_PORT || 4483;
+
+// Companion mode configuration
+const COMPANION_MODE = process.env.GIT_DRIVE_COMPANION_MODE === 'true';
+const COMPANION_DRIVE = process.env.GIT_DRIVE_COMPANION_DRIVE;
+
+// Companion repository URL
+const COMPANION_REPO_URL = "https://github.com/josmanvis/git-drive.git";
 
 app.use(express.json());
 
@@ -135,11 +142,113 @@ app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Companion info endpoint - returns info about companion mode
+app.get('/api/companion-info', (_req: Request, res: Response) => {
+  res.json({
+    companionMode: COMPANION_MODE,
+    companionDrive: COMPANION_DRIVE || null,
+  });
+});
+
+// Get current version from package.json
+function getCurrentVersion(): string {
+  try {
+    const packageJsonPath = path.join(__dirname, '..', 'package.json');
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+    return packageJson.version;
+  } catch {
+    return 'unknown';
+  }
+}
+
+// Get companion info for a specific drive
+function getCompanionInfo(mountpoint: string): { installed: boolean; version?: string; installedAt?: string; outdated?: boolean } {
+  const gitDrivePath = getGitDrivePath(mountpoint);
+  const companionVersionPath = path.join(gitDrivePath, 'companion.json');
+  const companionRepoPath = path.join(gitDrivePath, 'git-drive.git');
+
+  if (!existsSync(companionRepoPath)) {
+    return { installed: false };
+  }
+
+  try {
+    if (existsSync(companionVersionPath)) {
+      const companionInfo = JSON.parse(readFileSync(companionVersionPath, 'utf-8'));
+      const currentVersion = getCurrentVersion();
+      return {
+        installed: true,
+        version: companionInfo.version,
+        installedAt: companionInfo.installedAt,
+        outdated: companionInfo.version !== currentVersion,
+      };
+    }
+    return { installed: true };
+  } catch {
+    return { installed: true };
+  }
+}
+
+// Install/update companion on a drive
+app.post('/api/drives/:mountpoint/install-companion', (req: Request, res: Response) => {
+  try {
+    const mountpoint = decodeURIComponent(req.params.mountpoint);
+    const gitDrivePath = getGitDrivePath(mountpoint);
+
+    if (!existsSync(mountpoint)) {
+      res.status(404).json({ error: 'Drive not found or not mounted' });
+      return;
+    }
+
+    if (!existsSync(gitDrivePath)) {
+      mkdirSync(gitDrivePath, { recursive: true });
+    }
+
+    const companionRepoPath = path.join(gitDrivePath, 'git-drive.git');
+    const companionVersionPath = path.join(gitDrivePath, 'companion.json');
+    const currentVersion = getCurrentVersion();
+
+    try {
+      // If companion already exists, update it
+      if (existsSync(companionRepoPath)) {
+        try {
+          execSync(`git -C "${companionRepoPath}" fetch origin`, { stdio: 'pipe' });
+          execSync(`git -C "${companionRepoPath}" reset --hard origin/main`, { stdio: 'pipe' });
+        } catch {
+          // If update fails, remove and re-clone
+          execSync(`rm -rf "${companionRepoPath}"`, { stdio: 'pipe' });
+          execSync(`git clone --bare "${COMPANION_REPO_URL}" "${companionRepoPath}"`, { stdio: 'pipe' });
+        }
+      } else {
+        // Clone the companion
+        execSync(`git clone --bare "${COMPANION_REPO_URL}" "${companionRepoPath}"`, { stdio: 'pipe' });
+      }
+
+      // Write companion version info
+      const companionInfo = {
+        version: currentVersion,
+        installedAt: new Date().toISOString(),
+        repoUrl: COMPANION_REPO_URL,
+      };
+      writeFileSync(companionVersionPath, JSON.stringify(companionInfo, null, 2));
+
+      res.json({
+        success: true,
+        version: currentVersion,
+        message: 'Companion installed successfully',
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: `Failed to install companion: ${err.message}` });
+    }
+  } catch (err: any) {
+    res.status(500).json({ error: err.message || 'Failed to install companion' });
+  }
+});
+
 // List all connected drives
 app.get('/api/drives', async (_req: Request, res: Response) => {
   try {
     const drives = await getDiskInfo();
-    const result = drives
+    let result = drives
       .filter((d: any) => {
         const mp = d.mounted;
         if (!mp) return false;
@@ -159,15 +268,28 @@ app.get('/api/drives', async (_req: Request, res: Response) => {
 
         return true;
       })
-      .map((d: any) => ({
-        device: d.filesystem,
-        description: d.mounted,
-        size: d.blocks ? parseInt(d.blocks) * 1024 : 0,
-        isRemovable: true,
-        isSystem: d.mounted === '/',
-        mountpoints: [d.mounted],
-        hasGitDrive: existsSync(getGitDrivePath(d.mounted)),
-      }));
+      .map((d: any) => {
+        const mountpoint = d.mounted;
+        const companionInfo = getCompanionInfo(mountpoint);
+        return {
+          device: d.filesystem,
+          description: mountpoint,
+          size: d.blocks ? parseInt(d.blocks) * 1024 : 0,
+          isRemovable: true,
+          isSystem: mountpoint === '/',
+          mountpoints: [mountpoint],
+          hasGitDrive: existsSync(getGitDrivePath(mountpoint)),
+          hasCompanion: companionInfo.installed,
+          companionVersion: companionInfo.version,
+          companionOutdated: companionInfo.outdated,
+        };
+      });
+
+    // In companion mode, filter to only show the companion drive
+    if (COMPANION_MODE && COMPANION_DRIVE) {
+      result = result.filter((d: any) => d.mountpoints[0] === COMPANION_DRIVE);
+    }
+
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: 'Failed to list drives' });

@@ -280,16 +280,19 @@ describe('Server API', () => {
   describe('POST /api/drives/:mountpoint/init', () => {
     it('should initialize git-drive on a drive', async () => {
       vol.fromJSON({
-        '/Volumes/MyUSB': '',
+        '/Volumes/MyUSB': null,
       });
 
       const response = await request(app).post('/api/drives/%2FVolumes%2FMyUSB/init');
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('message', 'Git Drive initialized on this drive');
+      expect(response.body).toHaveProperty('gitDrivePath', '/Volumes/MyUSB/.git-drive');
     });
 
     it('should return 404 for non-existent drive', async () => {
+      vol.fromJSON({});
+
       const response = await request(app).post('/api/drives/%2FVolumes%2FNonExistent/init');
 
       expect(response.status).toBe(404);
@@ -299,7 +302,7 @@ describe('Server API', () => {
   describe('POST /api/drives/:mountpoint/repos', () => {
     it('should create a new repository', async () => {
       vol.fromJSON({
-        '/Volumes/MyUSB/.git-drive': '',
+        '/Volumes/MyUSB/.git-drive': null,
       });
 
       const response = await request(app)
@@ -312,7 +315,7 @@ describe('Server API', () => {
 
     it('should sanitize repository name', async () => {
       vol.fromJSON({
-        '/Volumes/MyUSB/.git-drive': '',
+        '/Volumes/MyUSB/.git-drive': null,
       });
 
       const response = await request(app)

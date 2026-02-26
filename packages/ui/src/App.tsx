@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { Routes, Route, Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { HardDrive, Search, FolderGit2, Trash2, Plus, ArrowLeft, File as FileIcon, Folder as FolderIcon, ChevronRight } from 'lucide-react';
+import { HardDrive, Search, FolderGit2, Trash2, Plus, ArrowLeft, File as FileIcon, Folder as FolderIcon, ChevronRight, Plug } from 'lucide-react';
 import Fuse from 'fuse.js';
 
 type Drive = {
@@ -12,6 +12,14 @@ type Drive = {
   isSystem: boolean;
   mountpoints: string[];
   hasGitDrive: boolean;
+  hasCompanion?: boolean;
+  companionVersion?: string;
+  companionOutdated?: boolean;
+};
+
+type CompanionInfo = {
+  companionMode: boolean;
+  companionDrive: string | null;
 };
 
 type Repo = {
@@ -29,6 +37,14 @@ type TreeItem = {
 };
 
 export default function App() {
+  const [companionInfo, setCompanionInfo] = useState<CompanionInfo>({ companionMode: false, companionDrive: null });
+
+  useEffect(() => {
+    axios.get('/api/companion-info')
+      .then(({ data }) => setCompanionInfo(data))
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#0d1117] text-gray-200 p-8 font-sans">
       <div className="max-w-5xl mx-auto space-y-8">
@@ -38,8 +54,19 @@ export default function App() {
               <FolderGit2 className="w-8 h-8 text-blue-400" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white tracking-tight">Git Drive</h1>
-              <p className="text-gray-400 text-sm">Turn any drive into a git remote.</p>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold text-white tracking-tight">Git Drive</h1>
+                {companionInfo.companionMode && (
+                  <span className="px-2 py-0.5 bg-purple-500/10 text-purple-400 text-xs font-semibold rounded-full border border-purple-500/20 flex items-center gap-1">
+                    <Plug className="w-3 h-3" /> Companion
+                  </span>
+                )}
+              </div>
+              <p className="text-gray-400 text-sm">
+                {companionInfo.companionMode && companionInfo.companionDrive 
+                  ? `Running from ${companionInfo.companionDrive}`
+                  : 'Turn any drive into a git remote.'}
+              </p>
             </div>
           </Link>
         </header>
@@ -138,6 +165,27 @@ function DriveList() {
                   </span>
                   <span>{(drive.size / 1024 / 1024 / 1024).toFixed(1)} GB</span>
                 </div>
+
+                {/* Companion status indicator */}
+                {drive.hasGitDrive && (
+                  <div className="mt-3 flex items-center gap-2">
+                    {drive.hasCompanion ? (
+                      drive.companionOutdated ? (
+                        <span className="px-2 py-1 text-xs font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 rounded-md flex items-center gap-1">
+                          <Plug className="w-3 h-3" /> Update Available (v{drive.companionVersion})
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/20 rounded-md flex items-center gap-1">
+                          <Plug className="w-3 h-3" /> Companion v{drive.companionVersion}
+                        </span>
+                      )
+                    ) : (
+                      <span className="px-2 py-1 text-xs font-medium bg-gray-800 text-gray-400 border border-gray-700 rounded-md">
+                        No Companion
+                      </span>
+                    )}
+                  </div>
+                )}
 
                 {!drive.hasGitDrive && (
                   <button

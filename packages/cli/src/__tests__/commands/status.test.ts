@@ -188,8 +188,12 @@ describe('status command', () => {
       '/home/testuser/.config/git-drive/links.json': '{}',
     });
 
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation();
+
     await status([]);
 
-    expect(consoleSpy).toHaveBeenCalledWith('Error detecting drives:', expect.any(Error));
+    expect(errorSpy).toHaveBeenCalledWith('Error detecting drives:', expect.any(Error));
+    
+    errorSpy.mockRestore();
   });
 });

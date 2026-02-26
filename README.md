@@ -59,8 +59,44 @@ git-drive server
 | `push` | Push current repo to the linked drive |
 | `list` | Show connected drives and their status |
 | `status` | Show detailed status of drives and repos |
+| `companion [path]` | Run git-drive from a drive (companion mode) - see below |
 | `server`, `start`, `ui` | Start the git-drive web UI server at http://localhost:4483 |
 | `-v`, `-V`, `--version`, `version` | Show the installed version |
+
+## Companion Mode
+
+Companion mode allows you to run git-drive directly from an external drive, making it portable and self-contained. This is useful when:
+
+- You want to use git-drive on multiple computers without installing it
+- You're at a different machine and need to access your backups
+- You want the drive to be completely self-contained
+
+### Using Companion Mode
+
+When you run `git-drive init` on a drive, it automatically installs a companion copy of git-drive on that drive. To use it:
+
+```bash
+# Interactive selection - shows drives with git-drive initialized
+git-drive companion
+
+# Direct path - run companion mode from a specific drive
+git-drive companion /Volumes/MyDrive
+```
+
+This will:
+1. Find an available port (starting from 4484)
+2. Start the git-drive server in companion mode
+3. Open your browser to the web UI
+4. Show only the companion drive in the UI
+
+Press Enter to stop the companion server.
+
+### Companion Mode Features
+
+- **Portable**: The companion is stored on the drive itself
+- **Self-updating**: The companion can be updated from the web UI
+- **Version tracking**: Shows companion version and update availability
+- **Port detection**: Automatically finds an available port if the default is in use
 
 ## How it works
 

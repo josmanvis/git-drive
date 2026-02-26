@@ -7,6 +7,7 @@ import { list } from "./commands/list.js";
 import { status } from "./commands/status.js";
 import { link } from "./commands/link.js";
 import { init } from "./commands/init.js";
+import { companion } from "./commands/companion.js";
 import { handleError } from "./errors.js";
 import { ensureServerRunning } from "./server.js";
 
@@ -20,13 +21,14 @@ const commands: Record<string, (args: string[]) => void | Promise<void>> = {
   list,
   status,
   link,
+  companion,
   server: startServer,
   start: startServer,
   ui: startServer,
 };
 
 // Commands that don't need the server running
-const NO_SERVER_COMMANDS = ['server', 'start', 'ui'];
+const NO_SERVER_COMMANDS = ['server', 'start', 'ui', 'companion'];
 
 function printUsage(): void {
   console.log(`
@@ -41,6 +43,7 @@ Commands:
   push                 Push current repo to drive
   list                 Show connected drives and their status
   status               Show detailed status of drives and repos
+  companion [path]     Run git-drive from a drive (companion mode)
   server, start, ui    Start the git-drive web UI server
 
 Options:
@@ -53,10 +56,14 @@ Examples:
   git-drive push                    Push current repo to drive
   git-drive list                    List connected drives
   git-drive status                  Show detailed status
+  git-drive companion               Run companion mode (interactive)
+  git-drive companion /Volumes/USB  Run companion mode for specific drive
   git-drive server                  Start the web UI at http://localhost:4483
 
 Environment Variables:
-  GIT_DRIVE_PORT       Port for the web server (default: 4483)
+  GIT_DRIVE_PORT            Port for the web server (default: 4483)
+  GIT_DRIVE_COMPANION_MODE  Set to 'true' for companion mode
+  GIT_DRIVE_COMPANION_DRIVE Drive path in companion mode
 
 Docker:
   docker run -it --rm -v /Volumes:/Volumes -p 4483:4483 git-drive

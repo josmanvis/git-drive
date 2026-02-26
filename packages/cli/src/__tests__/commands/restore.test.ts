@@ -104,10 +104,11 @@ describe('restore command', () => {
 
     restore(['my-project']);
 
-    // Should call git clone with the project name
-    expect(mockGit).toHaveBeenCalledWith(
-      expect.stringMatching(/clone.*my-project\.git/),
-      undefined
+    // Should call git clone with the project name 
+    // The git function is called twice: once for clone, once for remote rename
+    expect(mockGit).toHaveBeenCalledTimes(2);
+    expect(mockGit).toHaveBeenNthCalledWith(1, 
+      expect.stringMatching(/clone.*my-project\.git.*my-project$/)
     );
   });
 
