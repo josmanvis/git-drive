@@ -24,7 +24,7 @@
   "homepage": "https://github.com/josmanvis/git-drive#readme",
   "type": "commonjs",
   "bin": {
-    "git-drive": "./dist/index.js"
+    "git-drive": "dist/index.js"
   },
   "main": "./dist/index.js",
   "files": [
