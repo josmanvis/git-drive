@@ -152,6 +152,30 @@ describe('git', () => {
 
       expect(result).toHaveLength(0);
     });
+
+    it('should filter out temporary paths with TemporaryItems', async () => {
+      Object.defineProperty(process, 'platform', { value: 'darwin' });
+
+      mockGetDiskInfo.mockResolvedValue([
+        { mounted: '/var/folders/2b/b7kfzb0s2v55m89_k9qvpj9w0000gn/T/TemporaryItems/NSIRD_screencaptureui_g99XDe', filesystem: 'tmpfs', blocks: 1000, available: 500 },
+      ]);
+
+      const result = await listDrives();
+
+      expect(result).toHaveLength(0);
+    });
+
+    it('should filter out /var/folders paths', async () => {
+      Object.defineProperty(process, 'platform', { value: 'darwin' });
+
+      mockGetDiskInfo.mockResolvedValue([
+        { mounted: '/var/folders/abc', filesystem: 'tmpfs', blocks: 1000, available: 500 },
+      ]);
+
+      const result = await listDrives();
+
+      expect(result).toHaveLength(0);
+    });
   });
 
   describe('getRepoRoot', () => {

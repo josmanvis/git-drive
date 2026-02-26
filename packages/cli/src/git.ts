@@ -17,6 +17,11 @@ export async function listDrives(): Promise<any[]> {
     if (!mp) return false;
     if (mp === "/" || mp === "100%") return false;
 
+    // Exclude temporary and system paths on all platforms
+    if (mp.startsWith("/var/") || mp.startsWith("/private/var/") || mp.startsWith("/tmp") || mp.startsWith("/private/tmp")) return false;
+    if (mp.includes("TemporaryItems") || mp.includes("NSIRD_")) return false;
+    if (mp.startsWith("/System/") || mp.startsWith("/Library/")) return false;
+
     if (process.platform === "darwin") {
       return mp.startsWith("/Volumes/") && !mp.startsWith("/Volumes/Recovery");
     }
