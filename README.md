@@ -9,6 +9,7 @@ Backup your code to external storage volumes — offline, portable, and complete
 [![npm version](https://img.shields.io/npm/v/git-drive?color=00d9ff&labelColor=0a0e14&style=for-the-badge)](https://www.npmjs.com/package/git-drive)
 [![License](https://img.shields.io/badge/license-MIT-00d9ff?labelColor=0a0e14&style=for-the-badge)](LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-josmanvis/git-drive-00d9ff?labelColor=0a0e14&style=for-the-badge)](https://github.com/josmanvis/git-drive)
+[![Docs](https://img.shields.io/badge/Documentation-josmanvis.github.io/git--drive-00d9ff?labelColor=0a0e14&style=for-the-badge)](https://josmanvis.github.io/git-drive/)
 
 <img src="https://img.shields.io/badge/Node.js-≥18-00d9ff?labelColor=0a0e14&style=flat-square" alt="Node.js">
 <img src="https://img.shields.io/badge/Platform-macOS|Linux|Windows-00d9ff?labelColor=0a0e14&style=flat-square" alt="Platform">
