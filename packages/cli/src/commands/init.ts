@@ -1,16 +1,44 @@
 import { existsSync, statSync, mkdirSync } from "fs";
 import { resolve } from "path";
+import prompts from "prompts";
 import { saveConfig, getDriveStorePath } from "../config.js";
+import { listDrives } from "../git.js";
 import { GitDriveError } from "../errors.js";
 
-export function init(args: string[]): void {
+export async function init(args: string[]): Promise<void> {
+  let drivePath: string;
+
   const rawPath = args[0];
 
   if (!rawPath) {
-    throw new GitDriveError("Usage: git drive init <path>");
-  }
+    // No argument provided - prompt user to select a drive
+    const drives = await listDrives();
 
-  const drivePath = resolve(rawPath);
+    if (drives.length === 0) {
+      throw new GitDriveError(
+        "No external drives found. Please connect a drive and try again."
+      );
+    }
+
+    const { selectedDrive } = await prompts({
+      type: "select",
+      name: "selectedDrive",
+      message: "Select a drive to initialize git-drive:",
+      choices: drives.map((d: any) => ({
+        title: `${d.filesystem} (${d.mounted}) - ${Math.round((d.available / d.blocks) * 100)}% free`,
+        value: d.mounted,
+      })),
+    });
+
+    if (!selectedDrive) {
+      console.log("Operation cancelled.");
+      return;
+    }
+
+    drivePath = resolve(selectedDrive);
+  } else {
+    drivePath = resolve(rawPath);
+  }
 
   if (!existsSync(drivePath)) {
     throw new GitDriveError(
@@ -30,5 +58,7 @@ export function init(args: string[]): void {
 
   saveConfig({ drivePath });
 
-  console.log(`Drive configured: ${storePath}`);
+  console.log(`\n✅ Git Drive initialized!`);
+  console.log(`   Drive: ${drivePath}`);
+  console.log(`   Store: ${storePath}`);
 }
