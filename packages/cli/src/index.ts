@@ -5,9 +5,12 @@ import { push } from "./commands/push.js";
 import { list } from "./commands/list.js";
 import { status } from "./commands/status.js";
 import { link } from "./commands/link.js";
+import { init } from "./commands/init.js";
 import { handleError } from "./errors.js";
+import { ensureServerRunning } from "./server.js";
 
 const commands: Record<string, (args: string[]) => void | Promise<void>> = {
+  init,
   push,
   list,
   status,
@@ -17,6 +20,9 @@ const commands: Record<string, (args: string[]) => void | Promise<void>> = {
   ui: startServer,
 };
 
+// Commands that don't need the server running
+const NO_SERVER_COMMANDS = ['server', 'start', 'ui'];
+
 function printUsage(): void {
   console.log(`
 git-drive - Turn any external drive into a git remote backup for your code
@@ -25,6 +31,7 @@ Usage:
   git-drive <command> [options]
 
 Commands:
+  init                 Initialize git-drive on an external drive
   link                 Link current repo to a drive
   push                 Push current repo to drive
   list                 Show connected drives and their status
@@ -35,6 +42,7 @@ Options:
   -h, --help           Show this help message
 
 Examples:
+  git-drive init /Volumes/MyDrive   Initialize git-drive on a drive
   git-drive link                    Link current repo to a drive
   git-drive push                    Push current repo to drive
   git-drive list                    List connected drives
@@ -87,6 +95,11 @@ const [command, ...args] = process.argv.slice(2);
       console.error(`Unknown command: ${command}\n`);
       printUsage();
       process.exit(1);
+    }
+
+    // Ensure server is running for commands that need it
+    if (!NO_SERVER_COMMANDS.includes(command)) {
+      await ensureServerRunning();
     }
 
     await handler(args);

@@ -1,13 +1,10 @@
-#!/usr/bin/env node
-
 import express, { Request, Response } from 'express';
+import { spawn } from 'child_process';
 import path from 'path';
 import { readdirSync, existsSync, mkdirSync, statSync, readFileSync, appendFileSync } from 'fs';
 import { execSync } from 'child_process';
 import { getDiskInfo } from 'node-disk-info';
 import { homedir } from 'os';
-
-const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = process.env.GIT_DRIVE_PORT || 4483;
@@ -76,7 +73,67 @@ function loadLinks(): Record<string, { mountpoint: string; repoName: string; lin
   }
 }
 
+// ── Server Health Check Utilities ────────────────────────────────────────────
+
+const DEFAULT_PORT = 4483;
+
+export function getServerPort(): number {
+  return parseInt(process.env.GIT_DRIVE_PORT || String(DEFAULT_PORT), 10);
+}
+
+export async function isServerRunning(port?: number): Promise<boolean> {
+  const serverPort = port || getServerPort();
+  try {
+    const response = await fetch(`http://localhost:${serverPort}/api/drives`, {
+      method: 'HEAD',
+      signal: AbortSignal.timeout(1000),
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function ensureServerRunning(): Promise<void> {
+  const port = getServerPort();
+  const running = await isServerRunning(port);
+  
+  if (!running) {
+    console.log('\n  🚀 Starting Git Drive server...\n');
+    
+    // Start server in detached/background mode
+    const serverPath = require.resolve('./server.js');
+    const child = spawn(process.execPath, [serverPath], {
+      detached: true,
+      stdio: 'ignore',
+      env: process.env,
+    });
+    
+    // Allow the parent process to exit independently
+    child.unref();
+    
+    // Wait a moment for server to start
+    let retries = 10;
+    while (retries > 0) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      if (await isServerRunning(port)) {
+        break;
+      }
+      retries--;
+    }
+    
+    if (retries === 0) {
+      throw new Error('Failed to start Git Drive server. Please run "git-drive server" manually.');
+    }
+  }
+}
+
 // ── API Routes ───────────────────────────────────────────────────────
+
+// Health check endpoint
+app.get('/api/health', (_req: Request, res: Response) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 // List all connected drives
 app.get('/api/drives', async (_req: Request, res: Response) => {

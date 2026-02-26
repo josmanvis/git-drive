@@ -38,7 +38,7 @@ export function assertDriveMounted(drivePath: string): void {
 }
 
 export function getDriveStorePath(drivePath: string): string {
-  return join(drivePath, "git-drive");
+  return join(drivePath, ".git-drive");
 }
 
 export interface LinkRegistry {
