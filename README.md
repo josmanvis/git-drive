@@ -27,6 +27,13 @@ yarn global add git-drive
 Once installed, you can use the `git-drive` command:
 
 ```bash
+# Show version
+git-drive -v
+
+# Initialize git-drive on a drive (prompts to select if no path given)
+git-drive init
+git-drive init /Volumes/MyDrive
+
 # Link current repo to a drive
 git-drive link
 
@@ -38,7 +45,22 @@ git-drive list
 
 # Check drive and repo state
 git-drive status
+
+# Start the web UI server
+git-drive server
 ```
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `init [path]` | Initialize git-drive on an external drive. Prompts for drive selection if no path provided. |
+| `link` | Link current repo to a drive (interactive selection) |
+| `push` | Push current repo to the linked drive |
+| `list` | Show connected drives and their status |
+| `status` | Show detailed status of drives and repos |
+| `server`, `start`, `ui` | Start the git-drive web UI server at http://localhost:4483 |
+| `-v`, `-V`, `--version`, `version` | Show the installed version |
 
 ## How it works
 
@@ -47,6 +69,10 @@ Run the git-drive (available as a docker container). In the web ui (localhost:44
 Installing git-drive also installs a git-drive cli which can do all of the same things as the web ui. Users can link their current codebase to any connected drive with `git-drive link` this should create the repo in git-drive if it doesnt already exist. Then add a new remote (`git remote add git-drive .........`) and pushing to that new remote "git-drive".
 
 Git-drive can handle scenarios where multiple git-drive volumes are connected.
+
+### Auto-Start Server
+
+The CLI automatically starts the git-drive server in the background when needed. This means commands like `link`, `push`, `list`, and `status` work immediately without manually starting the server first.
 
 ## Docker
 
