@@ -1382,6 +1382,21 @@ a:hover {
     color: var(--accent-primary);
 }
 
+.footer-credit {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.footer-credit a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.footer-credit a:hover {
+    color: var(--accent-primary);
+}
+
 /* ============================================
    Responsive Design
    ============================================ */
