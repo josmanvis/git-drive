@@ -279,6 +279,9 @@
         // Initialize hash-based navigation
         handleHashChange();
         
+        // Initialize screenshot tabs
+        initScreenshotTabs();
+
         // Initialize tabs
         initTabs();
         
@@ -313,6 +316,20 @@
                 e.preventDefault();
                 const pageId = link.dataset.page;
                 navigateTo(pageId);
+            });
+        });
+    }
+
+    function initScreenshotTabs() {
+        const tabs = document.querySelectorAll('.screenshot-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.screenshot;
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                document.querySelectorAll('.browser-content .screenshot').forEach(img => {
+                    img.classList.toggle('active', img.id === 'screenshot-' + target);
+                });
             });
         });
     }
